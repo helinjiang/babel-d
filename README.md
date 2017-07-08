@@ -17,3 +17,7 @@ babel src -d lib
 ```
 
 这是通过 `babel-cli` 来运行的。如果需要在 node 端调用编译某个文件，可以安装 `babel-core`，并使用其提供的 `babel.transform` 等 [api](https://babeljs.io/docs/core-packages/)。但是这种方式如果处理某个文件夹下所有的文件的编译，则十分不方便，因此本项目就是为了解决这种场景。
+
+## 参考
+
+- https://github.com/babel/babelify
