@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const fse = require('fs-extra');
 const fileUtil = require('./file');
+
 let allowFileExt = ['.js'];
 
 /**
@@ -21,33 +22,31 @@ let compiledErrorFiles = [];
  * @return {} []
  */
 export function compile(srcPath, outPath) {
-    // let srcPath, outPath;
-
     let files = getFiles(srcPath, true);
-    let appFiles = getFiles(outPath, true);
 
     let changedFiles = [];
 
-    console.log(files)
+    console.log(files);
 
     files.forEach(file => {
+        let srcFullPath = path.join(srcPath, file);
+        let saveOutFullPathpath = path.join(outPath, file);
+
         let extname = path.extname(file);
 
         //if is not js file, only copy
         if (allowFileExt.indexOf(extname) === -1) {
-            // compileFile(file, true, srcPath, outPath);
+            compileFile(srcFullPath, saveOutFullPathpath, true);
             return;
         }
-
-        let srcFullPath = path.join(srcPath, file);
-        let saveOutFullPathpath = path.join(outPath, file);
 
         let mTime = fs.statSync(srcFullPath).mtime.getTime();
 
         if (fileUtil.isFile(saveOutFullPathpath)) {
             let outmTime = fs.statSync(saveOutFullPathpath).mtime.getTime();
 
-            //if compiled file mtime is after than source file, return
+            // if compiled file mtime is later than source file,
+            // it means source file not modified, so there is no necessary to compile.
             if (outmTime >= mTime) {
                 return;
             }
@@ -76,14 +75,7 @@ export function compile(srcPath, outPath) {
         }
     });
 
-    //notify auto reload service to clear file cache
-    // if (changedFiles.length && this.callback) {
-    //     this.callback(changedFiles);
-    // }
-
-    // if (!once) {
-    //     setTimeout(compile.bind(this), 100);
-    // }
+    // console.error(compiledErrorFiles)
 }
 
 /**
@@ -101,15 +93,10 @@ function compileFile(srcFullPath, saveOutFullPath, onlyCopy) {
     }
 
     // only copy file content
-    // if (onlyCopy) {
-    //     let saveFilepath = `${outPath}${path.sep}${file}`;
-    //
-    //     // mkdir
-    //     mkdir(path.dirname(saveFilepath));
-    //
-    //     fs.writeFileSync(saveFilepath, content);
-    //     return;
-    // }
+    if (onlyCopy) {
+        fse.outputFileSync(saveOutFullPath, content);
+        return;
+    }
 
     try {
         compileByBabel(content, srcFullPath, saveOutFullPath);
@@ -144,43 +131,10 @@ function compileByBabel(content, srcFullPath, saveOutFullPath) {
     fse.outputFileSync(saveOutFullPath, data.code);
 }
 
-/**
- * merge source map
- * @param  {String} content        []
- * @param  {Object} orginSourceMap []
- * @param  {Object} sourceMap      []
- * @return {}                []
- */
-// function mergeSourceMap(orginSourceMap, sourceMap) {
-//     let { SourceMapGenerator, SourceMapConsumer } = require('source-map');
-//
-//     sourceMap.file = sourceMap.file.replace(/\\/g, '/');
-//     sourceMap.sources = sourceMap.sources.map(filePath => {
-//         return filePath.replace(/\\/g, '/');
-//     });
-//
-//     var generator = SourceMapGenerator.fromSourceMap(new SourceMapConsumer(sourceMap));
-//     generator.applySourceMap(new SourceMapConsumer(orginSourceMap));
-//     sourceMap = JSON.parse(generator.toString());
-//
-//     return sourceMap;
-// }
-
-// function getRelationPath(file){
-//     //use dirname to resolve file path in source-map-support
-//     //so must use dirname in here
-//     let pPath = path.dirname(this.outPath + think.sep + file);
-//     return path.relative(pPath, this.srcPath + think.sep + file);
-// }
-
-function mkdir(dir) {
-    fse.mkdirsSync(dir);
-}
-
 function getFiles(paths) {
     let files = [];
 
-    let result = fileUtil.getAll(paths);
+    let result = fileUtil.getAllFiles(paths);
 
     files = result.map((item) => {
         return item.relativePath;
