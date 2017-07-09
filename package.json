@@ -2,7 +2,7 @@
   "name": "babel-d",
   "version": "0.0.1",
   "description": "compile directories by babel using in node",
-  "main": "index.js",
+  "main": "./lib/index.js",
   "scripts": {
     "compile": "babel --presets es2015-loose,stage-1 --plugins transform-runtime src/ --out-dir lib/ --source-maps",
     "eslint": "eslint src/",
