@@ -94,7 +94,7 @@ function compileFile(srcFullPath, saveOutFullPath, onlyCopy) {
 
     // only copy file content
     if (onlyCopy) {
-        fse.outputFileSync(saveOutFullPath, content);
+        fse.copySync(srcFullPath, saveOutFullPath);
         return;
     }
 
