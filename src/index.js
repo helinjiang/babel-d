@@ -1,5 +1,7 @@
-import { compile } from './babel-compile';
+import * as babelCompile from './babel-compile';
 
-module.exports = (srcPath, outPath, options = {}) => {
-  compile(srcPath, outPath, options);
-};
+const compileBabelD = babelCompile.compile;
+
+compileBabelD.babelCompile = babelCompile;
+
+module.exports = compileBabelD;
