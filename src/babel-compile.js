@@ -23,24 +23,37 @@ let compiledErrorFiles = [];
 
 /**
  * compile files
- * @return {} []
+ *
+ * @param {String} srcPath
+ * @param {String} outPath
+ * @param {Object} [options]
+ * @param {String} [options.debug] only for debug
  */
-export function compile(srcPath, outPath) {
+export function compile(srcPath, outPath, options = {}) {
+  if (options.debug) {
+    console.log('\nBegin compile...', srcPath, outPath, options);
+  }
+
   let files = getFiles(srcPath, true);
 
   let changedFiles = [];
 
-  console.log(files);
+  if (options.debug) {
+    console.log('all files:', files);
+  }
 
   files.forEach(file => {
     let srcFullPath = path.join(srcPath, file);
     let saveOutFullPathpath = path.join(outPath, file);
-
     let extname = path.extname(file);
+
+    if (options.debug) {
+      console.log(`[${extname}] ${srcFullPath} => ${saveOutFullPathpath}`);
+    }
 
     //if is not js file, only copy
     if (allowFileExt.indexOf(extname) === -1) {
-      compileFile(srcFullPath, saveOutFullPathpath, true);
+      compileFile(srcFullPath, saveOutFullPathpath, true, options);
       return;
     }
 
@@ -57,7 +70,7 @@ export function compile(srcPath, outPath) {
     }
 
     if (!compiledMtime[file] || mTime > compiledMtime[file]) {
-      let ret = compileFile(srcFullPath, saveOutFullPathpath);
+      let ret = compileFile(srcFullPath, saveOutFullPathpath, false, options);
 
       if (ret) {
         changedFiles.push(saveOutFullPathpath);
@@ -84,11 +97,14 @@ export function compile(srcPath, outPath) {
 
 /**
  * compile single file
- * @param  {String} file     []
- * @param  {Boolean} [onlyCopy] []
- * @return {}          []
+ *
+ * @param {String} srcFullPath
+ * @param {String} saveOutFullPath
+ * @param {Boolean} [onlyCopy]
+ * @param {Object} [options]
+ * @param {String} [options.debug] only for debug
  */
-export function compileFile(srcFullPath, saveOutFullPath, onlyCopy) {
+export function compileFile(srcFullPath, saveOutFullPath, onlyCopy, options = {}) {
   let content = fs.readFileSync(srcFullPath, 'utf8');
 
   //when get file content empty, maybe file is locked
@@ -112,7 +128,10 @@ export function compileFile(srcFullPath, saveOutFullPath, onlyCopy) {
     });
 
     let endTime = Date.now();
-    console.log(`Compile file ${srcFullPath}`, `Babel cost ${endTime - startTime}`);
+
+    if (options.debug) {
+      console.log(`Compile file ${srcFullPath}`, `Babel cost ${endTime - startTime} ms`);
+    }
 
     // save file
     fse.outputFileSync(saveOutFullPath, data.code);
