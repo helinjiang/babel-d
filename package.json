@@ -6,8 +6,7 @@
   "scripts": {
     "compile": "babel src/ --out-dir lib/ --source-maps",
     "prepublishOnly": "npm run compile",
-    "test": "npm run eslint && npm run test-cov",
-    "test-babel": "mocha --compilers js:babel-core/register",
+    "test": "mocha",
     "watch": "npm run watch-compile",
     "watch-compile": "npm run compile -- --watch"
   },
