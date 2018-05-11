@@ -147,12 +147,11 @@ export function compileFile(srcFullPath, saveOutFullPath, onlyCopy, options = {}
 /**
  * babel compile
  * https://babeljs.io/docs/core-packages/#babeltransformcode-string-options-object
- * @return {} []
+ * @return {{code,map,ast}}
  */
 export function compileByBabel(content, options) {
   return babel.transform(content, Object.assign({
-    presets: ['es2015-loose', 'stage-1'],
-    plugins: ['transform-runtime']
+    presets: ['env', 'stage-0']
   }, options));
 }
 
