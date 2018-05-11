@@ -4,12 +4,10 @@
   "description": "compile directories by babel using in node",
   "main": "./lib/index.js",
   "scripts": {
-    "compile": "babel --presets es2015-loose,stage-1 --plugins transform-runtime src/ --out-dir lib/ --source-maps",
-    "eslint": "eslint src/",
-    "prepublish": "npm run compile",
+    "compile": "babel src/ --out-dir lib/ --source-maps",
+    "prepublishOnly": "npm run compile",
     "test": "npm run eslint && npm run test-cov",
     "test-babel": "mocha --compilers js:babel-core/register",
-    "test-cov": "istanbul cover ./node_modules/mocha/bin/_mocha -- -t 50000 --recursive  -R spec test/",
     "watch": "npm run watch-compile",
     "watch-compile": "npm run compile -- --watch"
   },
@@ -40,8 +38,6 @@
     "walk-sync": "^0.3.2"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-eslint": "^7.2.3",
     "chai": "^4.1.2",
     "eslint": "^4.19.1",
     "mocha": "^3.5.3",
