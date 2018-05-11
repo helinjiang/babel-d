@@ -1,6 +1,6 @@
 {
   "name": "babel-d",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "description": "compile directories by babel using in node",
   "main": "./lib/index.js",
   "scripts": {
